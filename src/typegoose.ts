@@ -11,11 +11,6 @@ if (!isNullOrUndefined(process?.version) && !isNullOrUndefined(mongoose?.version
   if (semver.lt(mongoose?.version, '6.3.5')) {
     throw new Error(`Please use mongoose 6.3.5 or higher (Current mongoose: ${mongoose.version}) [E001]`);
   }
-
-  /* istanbul ignore next */
-  if (semver.lt(process.version.slice(1), '12.22.0')) {
-    throw new Error('You are using a NodeJS Version below 12.22.0, Please Upgrade! [E002]');
-  }
 }
 
 import { parseENV, setGlobalOptions } from './globalOptions';
