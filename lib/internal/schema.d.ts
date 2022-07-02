@@ -11,4 +11,6 @@ import type { AnyParamConstructor, IModelOptions } from '../types';
  * @returns Returns the Build Schema
  * @private
  */
-export declare function _buildSchema<U extends AnyParamConstructor<any>>(cl: U, origSch?: mongoose.Schema<any>, opt?: mongoose.SchemaOptions, isFinalSchema?: boolean, overwriteOptions?: IModelOptions): mongoose.Schema<any, mongoose.Model<any, any, any, any>, {}, {}, any>;
+export declare function _buildSchema<U extends AnyParamConstructor<any>>(cl: U, origSch?: mongoose.Schema<any>, opt?: mongoose.SchemaOptions, isFinalSchema?: boolean, overwriteOptions?: IModelOptions): mongoose.Schema<any, mongoose.Model<any, any, any, any, any>, {}, {}, any, {}, "type", {
+    [x: string]: any;
+}>;

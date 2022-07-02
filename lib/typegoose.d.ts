@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import 'reflect-metadata';
 import { setGlobalOptions } from './globalOptions';
-import type { AnyParamConstructor, BeAnObject, DocumentType, IModelOptions, Ref, ReturnModelType } from './types';
+import type { AnyParamConstructor, BeAnObject, DocumentType, IModelOptions, Ref, ReturnModelType, SubDocumentType, ArraySubDocumentType } from './types';
 export { mongoose, setGlobalOptions };
 export { setLogLevel, LogLevels } from './logSettings';
 export * from './prop';
@@ -14,7 +14,7 @@ export * from './typeguards';
 export * as defaultClasses from './defaultClasses';
 export * as errors from './internal/errors';
 export * as types from './types';
-export { DocumentType, Ref, ReturnModelType };
+export { DocumentType, Ref, ReturnModelType, SubDocumentType, ArraySubDocumentType };
 export { getClassForDocument, getClass, getName } from './internal/utils';
 export { Severity, PropType } from './internal/constants';
 /**
@@ -41,7 +41,7 @@ export declare function getModelForClass<U extends AnyParamConstructor<any>, Que
  * const NameModel = getModelWithString<typeof ClassName>("ClassName");
  * ```
  */
-export declare function getModelWithString<U extends AnyParamConstructor<any>>(key: string): undefined | ReturnModelType<U>;
+export declare function getModelWithString<U extends AnyParamConstructor<any>, QueryHelpers = BeAnObject>(key: string): undefined | ReturnModelType<U, QueryHelpers>;
 /**
  * Generates a Mongoose schema out of class props, iterating through all parents
  * @param cl The Class to build a Schema from

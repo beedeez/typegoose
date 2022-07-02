@@ -12,7 +12,15 @@ import type { Severity, PropType } from './internal/constants';
  */
 export declare type DocumentType<T, QueryHelpers = BeAnObject> = (T extends {
     _id: unknown;
-} ? mongoose.Document<T['_id'], QueryHelpers> & T : mongoose.Document<any, QueryHelpers> & T) & IObjectWithTypegooseFunction;
+} ? mongoose.Document<T['_id'], QueryHelpers, T> : mongoose.Document<any, QueryHelpers, T>) & T & IObjectWithTypegooseFunction;
+/**
+ * Get the Type of an instance of a SubDocument with Class properties
+ */
+export declare type SubDocumentType<T, QueryHelpers = BeAnObject> = DocumentType<T, QueryHelpers> & mongoose.Types.Subdocument;
+/**
+ * Get the Type of an instance of a SubDocument that exists within an array, with Class properties
+ */
+export declare type ArraySubDocumentType<T, QueryHelpers = BeAnObject> = DocumentType<T, QueryHelpers> & mongoose.Types.ArraySubdocument;
 /**
  * Used Internally for ModelTypes
  */
@@ -22,7 +30,9 @@ export declare type ModelType<T, QueryHelpers = BeAnObject> = mongoose.Model<Doc
  */
 export declare type AnyParamConstructor<T> = new (...args: any) => T;
 /**
- * The Type of a Model that gets returned by "getModelForClass" and "setModelForClass"
+ * The Type for Models used in typegoose, mostly returned by "getModelForClass" and "addModelToTypegoose"
+ * @example
+ * const Model: ReturnModelType<typeof YourClass, YourClassQueryHelper> = mongoose.model("YourClass", YourClassSchema);
  */
 export declare type ReturnModelType<U extends AnyParamConstructor<any>, QueryHelpers = BeAnObject> = ModelType<InstanceType<U>, QueryHelpers> & U;
 /** Generic "Function" type, because typescript does not like using "Function" directly in strict mode */
@@ -58,12 +68,18 @@ export interface BasePropOptions {
      */
     required?: mongoose.SchemaTypeOptions<any>['required'];
     /** Only accept Values from the Enum(|Array) */
-    enum?: string[] | BeAnObject;
+    enum?: mongoose.SchemaTypeOptions<any>['enum'];
     /**
      * Add "null" to the enum array
      * Note: Custom Typegoose Option
      */
     addNullToEnum?: boolean;
+    /**
+     * Set Custom "warnMixed" Severity for a specific property
+     * Overwrites Severity set in "modelOptions" for a specific property
+     * Note: Custom Typegoose Option
+     */
+    allowMixed?: Severity;
     /** Give the Property a default Value */
     default?: mongoose.SchemaTypeOptions<any>['default'];
     /** Give an Validator RegExp or Function */
@@ -317,7 +333,7 @@ export interface VirtualOptions {
     /** Extra Query Options */
     options?: mongoose.VirtualTypeOptions['options'];
     /** Match Options */
-    match?: KeyStringAny | ((doc: any) => KeyStringAny);
+    match?: mongoose.VirtualTypeOptions['match'];
     /**
      * If you set this to `true`, Mongoose will call any custom getters you defined on this virtual.
      *
@@ -358,7 +374,7 @@ export declare type Ref<PopulatedType, RawId extends mongoose.RefType = (Populat
     _id?: mongoose.RefType;
 } ? NonNullable<PopulatedType['_id']> : mongoose.Types.ObjectId) | undefined> = mongoose.PopulatedDoc<PopulatedType, RawId>;
 /**
- * An Function type for a function that doesn't have any arguments and doesn't return anything
+ * A Function type for a function that doesn't have any arguments and doesn't return anything
  */
 export declare type EmptyVoidFn = () => void;
 export interface DiscriminatorObject {
@@ -421,9 +437,7 @@ export declare type DecoratedPropertyMetadataMap = Map<string | symbol, Decorate
 /**
  * copy-paste from mongodb package (should be same as IndexOptions from 'mongodb')
  */
-export interface IndexOptions<T> extends mongoose.IndexOptions {
-    weights?: Partial<Record<keyof T, number>>;
-}
+export declare type IndexOptions<_T> = mongoose.IndexOptions;
 /**
  * Type for the Values stored in the Reflection for Indexes
  * @example
@@ -431,20 +445,20 @@ export interface IndexOptions<T> extends mongoose.IndexOptions {
  * const indices: IIndexArray[] = Reflect.getMetadata(DecoratorKeys.Index, target) || []);
  * ```
  */
-export interface IIndexArray<T> {
+export interface IIndexArray {
     fields: KeyStringAny;
-    options?: IndexOptions<T>;
+    options?: IndexOptions<unknown>;
 }
 /**
  * Type for the Values stored in the Reflection for Plugins
  * @example
  * ```ts
- * const plugins: IPluginsArray<any>[] = Array.from(Reflect.getMetadata(DecoratorKeys.Plugins, target) ?? []);
+ * const plugins: IPluginsArray[] = Array.from(Reflect.getMetadata(DecoratorKeys.Plugins, target) ?? []);
  * ```
  */
-export interface IPluginsArray<T> {
+export interface IPluginsArray {
     mongoosePlugin: Func;
-    options: T;
+    options: BeAnObject | undefined;
 }
 /**
  * Type for the Values stored in the Reflection for Virtual Populates
@@ -453,7 +467,7 @@ export interface IPluginsArray<T> {
  * const virtuals: VirtualPopulateMap = new Map(Reflect.getMetadata(DecoratorKeys.VirtualPopulate, target.constructor) ?? []);
  * ```
  */
-export declare type VirtualPopulateMap = Map<string, any & VirtualOptions>;
+export declare type VirtualPopulateMap = Map<string, VirtualOptions & Record<string, unknown>>;
 /**
  * Gets the signature (parameters with their types, and the return type) of a function type.
  *
@@ -532,7 +546,10 @@ export interface IGlobalOptions {
 export interface IObjectWithTypegooseFunction {
     typegooseName(): string;
 }
-/** Interface describing a Object that has a "typegooseName" Value */
+/**
+ * Interface describing a Object that has a "typegooseName" Value
+ * @deprecated This interface and value will be removed in typegoose 10, use {@link IObjectWithTypegooseFunction} instead
+ */
 export interface IObjectWithTypegooseName {
     typegooseName: string;
 }
@@ -540,10 +557,8 @@ export interface IObjectWithTypegooseName {
 export interface IPrototype {
     prototype?: any;
 }
-/** An Helper Interface for key: any: string */
-export interface KeyStringAny {
-    [key: string]: any;
-}
+/** An Helper Interface for defining a "key" index of "string" and "value" of "any" */
+export declare type KeyStringAny = Record<string, any>;
 /**
  * The Return Type of "utils.getType"
  */
@@ -552,6 +567,7 @@ export interface GetTypeReturn {
     dim: number;
 }
 /**
- * This type is for lint error "ban-types"
+ * This type is for lint error "ban-types" where "{}" would be used
+ * This type is seperate from "{@link KeyStringAny}" because it has a different meaning
  */
 export declare type BeAnObject = Record<string, any>;

@@ -22,18 +22,21 @@ declare type AllowedRefTypes = typeof String | typeof Number | typeof Buffer | t
 /**
  * Check if the document is of type "refType"
  * @param doc The Ref with uncretain type
+ * @param refType The Expected Reference Type (this is required because this type is only known at compile time, not at runtime)
  */
 export declare function isRefType<T, S extends RefType>(doc: Ref<T, S> | undefined, refType: AllowedRefTypes): doc is NonNullable<S>;
 /**
  * Check if the array is fully of type "refType"
  * Only returns "true" if all members in the array are of type "refType"
  * @param docs The Ref with uncretain type
+ * @param refType The Expected Reference Type (this is required because this type is only known at compile time, not at runtime)
  */
 export declare function isRefTypeArray<T, S extends RefType>(docs: mongoose.Types.Array<Ref<T, S>> | undefined, refType: AllowedRefTypes): docs is mongoose.Types.Array<NonNullable<S>>;
 /**
  * Check if the array is fully of type "refType"
  * Only returns "true" if all members in the array are of type "refType"
  * @param docs The Ref with uncretain type
+ * @param refType The Expected Reference Type (this is required because this type is only known at compile time, not at runtime)
  */
 export declare function isRefTypeArray<T, S extends RefType>(docs: Ref<T, S>[] | undefined, refType: AllowedRefTypes): docs is NonNullable<S>[];
 /**

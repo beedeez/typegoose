@@ -48,7 +48,7 @@ export declare function initProperty(name: string, key: string, proptype: PropTy
  */
 export declare function getClassForDocument(document: mongoose.Document): NewableFunction | undefined;
 /**
- * Get the Class for a given Schema
+ * Get the Class for a number of inputs
  * @param input The Input to fetch the class from
  */
 export declare function getClass(input: (mongoose.Document & IObjectWithTypegooseFunction) | (mongoose.Schema.Types.Subdocument & IObjectWithTypegooseFunction) | string | IObjectWithTypegooseName | any): NewableFunction | undefined;
@@ -109,7 +109,7 @@ export declare function mergeMetadata<T = any>(key: DecoratorKeys, value: unknow
  * @param value The value to use
  * @param cl The Class to get the values from
  */
-export declare function mergeSchemaOptions<U extends AnyParamConstructor<any>>(value: mongoose.SchemaOptions | undefined, cl: U): mongoose.SchemaOptions | undefined;
+export declare function mergeSchemaOptions<U extends AnyParamConstructor<any>>(value: mongoose.SchemaOptions | undefined, cl: U): mongoose.SchemaOptions<"type", unknown, {}, {}, {}, {}> | undefined;
 /**
  * Tries to return the right target
  * if target.constructor.name is "Function", return "target", otherwise "target.constructor"

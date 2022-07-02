@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import type { BeAnObject, IndexOptions } from './types';
 /**
  * Defines a index for this Class which will then be added to the Schema.
@@ -9,5 +10,5 @@ import type { BeAnObject, IndexOptions } from './types';
  * class ClassName {}
  * ```
  */
-export declare function index<T extends BeAnObject = BeAnObject>(fields: Partial<Record<keyof T, string | -1 | 1>>, options?: IndexOptions<T>): ClassDecorator;
+export declare function index<T extends BeAnObject = BeAnObject>(fields: mongoose.IndexDefinition, options?: IndexOptions<T>): ClassDecorator;
 export { index as Index };
